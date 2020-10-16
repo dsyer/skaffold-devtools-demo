@@ -3,6 +3,4 @@ kind: Kustomization
 commonLabels:
   app: app
 resources:
-- ../simple
-patchesStrategicMerge:
 - deployment.yaml

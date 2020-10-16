@@ -23,6 +23,5 @@ WORKDIR /workspace
 ARG DEPENDENCY=/workspace
 COPY --from=build ${DEPENDENCY}/libs /workspace/libs
 
-ENV MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=info,health,metrics,prometheus
-ENTRYPOINT ["sh", "-c", "/layers/paketo-buildpacks_bellsoft-liberica/jre/bin/java -cp .:BOOT-INF/classes:BOOT-INF/lib/*:${EXT_LIBS}/*:${DEV_LIBS}/* \
+ENTRYPOINT ["sh", "-c", "/layers/paketo-buildpacks_bellsoft-liberica/jre/bin/java -cp .:BOOT-INF/classes:BOOT-INF/lib/*:${EXT_LIBS}/* \
   com.example.demo.DemoApplication ${0} ${@}"]

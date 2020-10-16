@@ -1,0 +1,26 @@
+apiVersion: skaffold/v2beta5
+kind: Config
+build:
+  local:
+    useBuildkit: true
+  artifacts:
+  - image: localhost:5000/apps/demo
+    sync:
+      manual:
+      - src: "target/classes/**/*"
+        dest: /workspace/BOOT-INF/classes
+        strip: target/classes/
+      - src: "src/main/resources/**/*"
+        dest: /workspace/BOOT-INF/classes
+        strip: src/main/resources/
+deploy:
+  kustomize:
+    paths:
+    - k8s/simple
+
+profiles:
+  - name: dev
+    deploy:
+      kustomize:
+       paths:
+       - k8s/dev

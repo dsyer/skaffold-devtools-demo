@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.3.0.RC1</version>
+		<version>2.4.0-M3</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
@@ -40,7 +40,7 @@
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-dependencies</artifactId>
-				<version>Hoxton.SR1</version>
+				<version>Hoxton.SR8</version>
 				<scope>import</scope>
 				<type>pom</type>
 			</dependency>
@@ -58,57 +58,6 @@
 						<enabled>true</enabled>
 					</layers>
 				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-clean-plugin</artifactId>
-				<configuration>
-					<filesets>
-						<fileset>
-							<directory>k8s/vendor</directory>
-						</fileset>
-					</filesets>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-scm-plugin</artifactId>
-				<version>1.11.2</version>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>checkout</goal>
-							<goal>update</goal>
-						</goals>
-						<configuration>
-							<workingDirectory>target/vendor</workingDirectory>
-							<checkoutDirectory>target/vendor</checkoutDirectory>
-							<connectionUrl>scm:git:https://github.com/dsyer/docker-services</connectionUrl>
-							<scmVersion>master</scmVersion>
-							<scmVersionType>branch</scmVersionType>
-							<skipCheckoutIfExists>true</skipCheckoutIfExists>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<configuration>
-							<target>
-								<!-- In a real application we might clone this from github first, but in this sample the k6e starters are local -->
-								<copy todir="k8s/vendor" failonerror="false">
-									<fileset dir="target/vendor/layers" excludes="samples/**" />
-								</copy>
-							</target>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>

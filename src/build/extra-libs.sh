@@ -28,16 +28,17 @@ CPPARENT=`java -Dthin.trace=true -jar ${THIN_JAR} --thin.archive=${JAR_FILE} --t
 function install {
   
   local profile=${1:-k8s}
+  local libs=${2:-${profile}}
   echo Calculating classpath diffs for profile=${profile}
   
   CPCHILD=`java -Dthin.trace=true -jar ${THIN_JAR} --thin.archive=${JAR_FILE} --thin.classpath --thin.parent=${JAR_FILE} --thin.profile=${profile}`
 
-  mkdir -p /workspace/libs/${profile}
+  mkdir -p /workspace/libs/${libs}
   for f in `echo ${CPCHILD#${CPPARENT}*} | tr ':' ' '`; do
-    cp $f /workspace/libs/${profile};
+    cp $f /workspace/libs/${libs};
   done
 
 }
 
 install k8s
-install dev
+install dev,k8s dev
