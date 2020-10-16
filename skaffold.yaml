@@ -27,3 +27,8 @@ profiles:
       kustomize:
        paths:
        - k8s/dev
+  - name: prod
+    deploy:
+      kustomize:
+       paths:
+       - k8s/prod

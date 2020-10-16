@@ -1,9 +1,17 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
+  # a single application.properties file, configure with SPRING_CONFIG_IMPORTS=file:/{mountPath}/
   name: mysql-config
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
+  # individual env var entries, configure with envFrom
   name: mysql-env
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  # config tree style, one property per file, configure with SPRING_CONFIG_IMPORTS=configtree:/{mountPath}/
+  name: mysql-tree
