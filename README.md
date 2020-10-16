@@ -1,5 +1,9 @@
 # Devtools in Kubernetes
 
+How would you get a Spring Boot app running in Kubernetes in development mode, where it can quickly restart if there are changes to the source code? You want to keep your default settings and binary artifacts optimized for production, so you don't want to add Devtools to the build, but you want it to kick in when you ask it to, even if the app is running in a cluster.
+
+Spring Boot has its [Devtools](https://docs.spring.io/spring-boot/docs/1.5.16.RELEASE/reference/html/using-boot-devtools.html) feature, but that works best if the app is running in the same place as the code is being edited. You could run the IDE in the cluster, and that's possible with things like [Code Server](https://github.com/cdr/code-server). If we wanted to stick with a local IDE though, Skaffold has a [file sync](https://skaffold.dev/docs/pipeline-stages/filesync/) feature. Could that work with Devtools?
+
 ## Preparation
 
 Get `kind` running locally and a local registry on port 5000, e.g. using the utility script in this repo:
