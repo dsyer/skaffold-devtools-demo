@@ -11,4 +11,4 @@ spec:
           - name: EXT_LIBS
             value: /workspace/libs/k8s
           - name: MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE
-            value: info,health,metrics,prometheus
+            value: info,health,metrics,prometheus,env

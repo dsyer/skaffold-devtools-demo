@@ -5,7 +5,4 @@ resources:
 - ../mysql
 components:
 - ../simple/actuator
-- ../simple/devtools
 - ../mysql/app
-patchesStrategicMerge:
-- deployment.yaml

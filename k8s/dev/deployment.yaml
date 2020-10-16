@@ -8,7 +8,5 @@ spec:
       containers:
       - name: demo
         env:
-          - name: EXT_LIBS
-            value: /workspace/libs/dev
-          - name: MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE
-            value: info,health,metrics,prometheus
+          - name: SPRING_APPLICATION_JSON
+            value: '{"logging.level.org.springframework.boot.context.config": "trace"}'

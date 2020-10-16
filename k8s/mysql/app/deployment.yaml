@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo
+spec:
+  template:
+    spec:
+      containers:
+      - name: demo
+        volumeMounts:
+        - name: mysql
+          mountPath: /config/bindings/mysql/meta
+        env:
+        - name: SPRING_CONFIG_IMPORTS
+          value: file:/config/bindings/mysql/meta/
+      volumes:
+      - name: mysql
+        configMap:
+          name: mysql-config
