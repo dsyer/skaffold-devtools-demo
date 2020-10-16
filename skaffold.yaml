@@ -7,12 +7,15 @@ build:
   - image: localhost:5000/apps/demo
     sync:
       manual:
-      - src: "target/classes/**/*"
-        dest: /workspace/BOOT-INF/classes
-        strip: target/classes/
+      # Need to copy source files as well, just to get classes synced
+      - src: "src/main/java/**/*"
+        dest: /workspace
       - src: "src/main/resources/**/*"
         dest: /workspace/BOOT-INF/classes
         strip: src/main/resources/
+      - src: "target/classes/**/*"
+        dest: /workspace/BOOT-INF/classes
+        strip: target/classes/
 deploy:
   kustomize:
     paths:
