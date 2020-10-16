@@ -1,0 +1,12 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo
+spec:
+  template:
+    spec:
+      containers:
+      - name: demo
+        env:
+          - name: EXT_LIBS
+            value: /workspace/libs/dev
