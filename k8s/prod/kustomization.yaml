@@ -6,3 +6,5 @@ resources:
 components:
 - ../simple/actuator
 - ../mysql/app
+patchesStrategicMerge:
+- deployment.yaml
