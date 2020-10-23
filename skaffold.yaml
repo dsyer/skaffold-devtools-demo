@@ -3,8 +3,8 @@ kind: Config
 build:
   artifacts:
   - image: localhost:5000/apps/demo
-    custom:
-      buildCommand: ./mvnw spring-boot:build-image -D spring-boot.build-image.imageName=${IMAGE} -D spring-boot.build-image.builder=localhost:5000/packs/java
+    buildpacks:
+      builder: localhost:5000/packs/java
       dependencies:
         paths:
           - pom.xml
