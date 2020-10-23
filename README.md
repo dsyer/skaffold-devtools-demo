@@ -45,6 +45,13 @@ To take advantage of the devtools restarts we can deploy to Kubernetes, and let 
 skaffold dev --port-forward -p dev
 ```
 
+It also works with `skaffold debug`, but remember to add an explicit `--auto-sync` to the command line:
+
+
+```
+skaffold debug --auto-sync --port-forward -p dev
+```
+
 Output:
 
 ```

@@ -23,5 +23,8 @@ WORKDIR /workspace
 ARG DEPENDENCY=/workspace
 COPY --from=build ${DEPENDENCY}/libs /workspace/libs
 
+# Make sure Skaffold knows we are a Java process
+ENV JAVA_VERSION=8
+
 ENTRYPOINT ["sh", "-c", "/layers/paketo-buildpacks_bellsoft-liberica/jre/bin/java -cp .:BOOT-INF/classes:BOOT-INF/lib/*:${EXT_LIBS}/* \
   org.springframework.samples.petclinic.PetClinicApplication ${0} ${@}"]
