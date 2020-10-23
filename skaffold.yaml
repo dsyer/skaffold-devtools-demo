@@ -3,8 +3,8 @@ kind: Config
 build:
   artifacts:
   - image: localhost:5000/apps/demo
-    buildpacks:
-      builder: dsyer/java-builder
+    custom:
+      buildCommand: ./mvnw spring-boot:build-image -D spring-boot.build-image.imageName=${IMAGE} -D spring-boot.build-image.builder=localhost:5000/packs/java
       dependencies:
         paths:
           - pom.xml
@@ -12,7 +12,6 @@ build:
           - target/classes
     sync:
       manual:
-      # Need to copy source files as well, just to get classes synced
       - src: "target/classes/**/*"
         dest: /workspace/BOOT-INF/classes
         strip: target/classes/

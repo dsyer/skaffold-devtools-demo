@@ -1,0 +1,101 @@
+#!/bin/bash
+set -eo pipefail
+
+layers_dir=${1:-target/layers}
+platform_dir=${2:-target/platform}
+plan_path=${3:-target/plan.toml}
+
+echo "Building "$*
+echo Platform: $platform
+echo Layers: $layers_dir
+echo Plan: $plan
+echo $PATH
+
+thin_version="1.0.25.RELEASE"
+thin_url="https://repo1.maven.org/maven2/org/springframework/boot/experimental/spring-boot-thin-launcher/${thin_version}/spring-boot-thin-launcher-${thin_version}-exec.jar"
+
+thin_layer_dir=${layers_dir}/thin
+if [[ -f ${thin_layer_dir}.toml ]] && grep -q url ${thin_layer_dir}.toml; then
+    cached_thin_url=$(cat "${thin_layer_dir}.toml" | grep url | sed -e 's/.*= //' -e 's/"//g')
+fi
+
+if [[ ${thin_url} != ${cached_thin_url} ]]; then
+  rm -rf "${thin_layer_dir}"
+  mkdir -p "${thin_layer_dir}"/env
+  echo Downloading thin.jar
+  wget -q -O - "$thin_url" > ${thin_layer_dir}/thin.jar
+
+  cat > "${thin_layer_dir}.toml" << EOF
+build = true
+cache = true
+
+[metadata]
+version = "${thin_version}"
+url = "${thin_url}"
+EOF
+fi
+
+THIN_JAR=${thin_layer_dir}/thin.jar
+
+if [[ ! -d $HOME/.m2 ]]; then
+    m2_layer_dir="${layers_dir}/maven_m2"
+    if [[ ! -d ${m2_layer_dir} ]]; then
+        mkdir -p ${m2_layer_dir}
+        echo "cache = true" > ${m2_layer_dir}.toml
+    fi
+    ln -s ${m2_layer_dir} $HOME/.m2
+fi
+
+cat > "${layers_dir}/dev.toml" << EOF
+launch = true
+EOF
+if [[ ! -f META-INF/thin-dev.properties ]]; then
+    cat > META-INF/thin-dev.properties << EOF
+dependencies.spring-boot-devtools=org.springframework.boot:spring-boot-devtools
+EOF
+fi
+cat > "${layers_dir}/prod.toml" << EOF
+launch = true
+EOF
+if [[ ! -f META-INF/thin-prod.properties ]]; then
+    cat > META-INF/thin-prod.properties << EOF
+dependencies.spring-boot-actuator=org.springframework.boot:spring-boot-starter-actuator
+dependencies.prometheus=io.micrometer:micrometer-registry-prometheus
+EOF
+fi
+
+echo "Installing additional jars"
+
+CPPARENT=`java -Dthin.trace=true -jar ${THIN_JAR} --thin.archive=. --thin.classpath`
+
+function install {
+  
+  local profile=${1:-prod}
+  local libs=${2:-${profile}}
+  echo Calculating classpath diffs for profile=${profile}
+  
+  CPCHILD=`java -Dthin.trace=true -jar ${THIN_JAR} --thin.archive=. --thin.classpath --thin.parent=. --thin.profile=${profile}`
+
+  mkdir -p ${layers_dir}/${libs}
+  for f in `echo ${CPCHILD#${CPPARENT}*} | tr ':' ' '`; do
+    cp $f ${layers_dir}/${libs};
+  done
+
+}
+
+install prod
+install dev,prod dev
+
+main=`sed 's/\s$//' META-INF/MANIFEST.MF | sed 'N;s/\n //;P;D' | grep Start | sed -e 's/.*: //' -e 's/\s*//g'`
+echo Main class: ${main}
+
+cat > "${layers_dir}/launch.toml" << EOF
+[[processes]]
+  type = "prod"
+  command = "java -cp ./BOOT-INF/classes:./BOOT-INF/lib/*:.:${layers_dir}/prod/* $JAVA_OPTS ${main}"
+  direct = false
+[[processes]]
+  type = "dev"
+  command = "java -cp ./BOOT-INF/classes:./BOOT-INF/lib/*:.:${layers_dir}/dev/* $JAVA_OPTS ${main} --management.endpoints.web.exposure.include=*"
+  direct = false
+EOF

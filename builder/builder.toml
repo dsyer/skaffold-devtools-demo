@@ -1,0 +1,29 @@
+buildpacks = [
+  { id = "io.test.java",       uri = "buildpacks/io.test.java/latest" },
+  { image = "gcr.io/paketo-buildpacks/maven:3.2.0" },
+  { image = "gcr.io/paketo-buildpacks/bellsoft-liberica:4.1.0" },
+  { image = "gcr.io/paketo-buildpacks/executable-jar:3.1.2" },
+  { image = "gcr.io/paketo-buildpacks/spring-boot:3.3.0" },
+  { image = "gcr.io/paketo-buildpacks/procfile:2.0.3" }
+]
+
+[[order]]
+group = [
+### Order is strictly enforced
+  { id = "paketo-buildpacks/bellsoft-liberica",          version="4.1.0" },
+  { id = "paketo-buildpacks/maven",                      version="3.2.0", optional = true },
+
+### Order determines precedence
+  { id = "paketo-buildpacks/executable-jar",                version="3.1.2", optional = true },
+  { id = "paketo-buildpacks/spring-boot",                version="3.3.0", optional = true },
+  { id = "io.test.java" },
+
+]
+
+[lifecycle]
+version = "0.9.1"
+
+[stack]
+id          = "io.buildpacks.stacks.bionic"
+build-image = "paketobuildpacks/build:full-cnb"
+run-image   = "paketobuildpacks/run:full-cnb"

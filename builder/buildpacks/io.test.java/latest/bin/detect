@@ -1,0 +1,12 @@
+#!/bin/bash
+
+plan=${2:-target/plan.toml}
+
+echo >&2 "Detecting Java "$*
+
+cat >> $plan <<EOF
+[[requires]]
+  name = "jdk"
+EOF
+
+exit 0

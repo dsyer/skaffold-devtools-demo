@@ -12,22 +12,34 @@ Get `kind` running locally and a local registry on port 5000, e.g. using the uti
 src/build/kind-setup.sh
 ```
 
-Now build the base image (just webflux, no frills):
+Set up the default builder:
 
 ```
-./mvnw spring-boot:build-image
+pack set-default-builder paketobuildpacks/builder:full
 ```
 
-Then if you build from the `Dockerfile` it will enhance the image with additional libraries (adds actuators and devtools):
+and then make a builder:
 
 ```
-docker build . -t demo
+pack create-builder -c builder.toml localhost:5000/packs/java
+```
+
+Push the image into the repository so it can be used by other tools (like `skaffold`):
+
+```
+docker push localhost:5000/packs/java
+```
+
+Build an image:
+
+```
+pack build demo --builder localhost:5000/packs/java
 ```
 
 Run it:
 
 ```
-docker run -e EXT_LIBS=/workspace/dev -p 8080:8080 demo
+docker run --entrypoint "/cnb/process/dev" -p 8080:8080 demo
 ```
 
 You will see the devtools starting (via logs and the `restartedMain` thread ID, and there should be actuators
@@ -45,7 +57,7 @@ To take advantage of the devtools restarts we can deploy to Kubernetes, and let 
 skaffold dev --port-forward -p dev
 ```
 
-It also works with `skaffold debug`, but remember to add an explicit `--auto-sync` to the command line:
+It also works with `skaffold debug`, but remember to add an explicit `--auto-sync` to the command line. E.g:
 
 
 ```
