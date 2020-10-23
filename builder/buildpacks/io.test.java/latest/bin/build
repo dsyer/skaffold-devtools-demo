@@ -92,10 +92,12 @@ echo Main class: ${main}
 cat > "${layers_dir}/launch.toml" << EOF
 [[processes]]
   type = "prod"
-  command = "java -cp ./BOOT-INF/classes:./BOOT-INF/lib/*:.:${layers_dir}/prod/* $JAVA_OPTS ${main}"
+  command = "java"
+  arguments = [ "-cp", "./BOOT-INF/classes:./BOOT-INF/lib/*:.:${layers_dir}/prod/*", "${main}" ]
   direct = false
 [[processes]]
   type = "dev"
-  command = "java -cp ./BOOT-INF/classes:./BOOT-INF/lib/*:.:${layers_dir}/dev/* $JAVA_OPTS ${main} --management.endpoints.web.exposure.include=*"
+  command = "java"
+  arguments = [ "-cp", "./BOOT-INF/classes:./BOOT-INF/lib/*:.:${layers_dir}/dev/*", "${main}", "--management.endpoints.web.exposure.include=*" ]
   direct = false
 EOF

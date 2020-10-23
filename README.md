@@ -21,7 +21,7 @@ pack set-default-builder paketobuildpacks/builder:full
 and then make a builder:
 
 ```
-pack create-builder -c builder.toml localhost:5000/packs/java
+pack create-builder -c builder/builder.toml localhost:5000/packs/java
 ```
 
 Push the image into the repository so it can be used by other tools (like `skaffold`):
