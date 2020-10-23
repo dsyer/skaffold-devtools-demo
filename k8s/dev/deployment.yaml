@@ -8,5 +8,7 @@ spec:
       containers:
       - name: demo
         env:
+          - name: JAVA_VERSION
+            value: "11"
           - name: SPRING_APPLICATION_JSON
             value: '{"logging.level.org.springframework.boot.context.config": "trace"}'

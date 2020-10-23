@@ -8,4 +8,5 @@ spec:
       containers:
       - name: demo
         command:
+            - "/cnb/lifecycle/launcher"
             - "dev"
