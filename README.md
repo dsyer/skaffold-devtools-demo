@@ -30,7 +30,7 @@ Push the image into the repository so it can be used by other tools (like `skaff
 docker push localhost:5000/packs/java
 ```
 
-Build an image:
+## Build an Image
 
 ```
 pack build demo --builder localhost:5000/packs/java
