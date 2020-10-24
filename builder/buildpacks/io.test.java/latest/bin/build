@@ -2,13 +2,9 @@
 set -eo pipefail
 
 layers_dir=${1:-target/layers}
-platform_dir=${2:-target/platform}
-plan_path=${3:-target/plan.toml}
 
 echo "Building "$*
-echo Platform: $platform
 echo Layers: $layers_dir
-echo Plan: $plan
 echo $PATH
 
 thin_version="1.0.25.RELEASE"
@@ -81,6 +77,10 @@ function install {
     cp $f ${layers_dir}/${libs};
   done
 
+  mkdir -p ${layers_dir}/${libs}/env.launch/${libs}
+  echo -n /workspace/BOOT-INF/classes:/workspace/BOOT-INF/lib/'*':${layers_dir}/${libs}/'*' >> ${layers_dir}/${libs}/env.launch/${libs}/CLASSPATH.append
+  echo -n ":" >> ${layers_dir}/${libs}/env.launch/${libs}/CLASSPATH.delim
+
 }
 
 install prod
@@ -91,13 +91,11 @@ echo Main class: ${main}
 
 cat > "${layers_dir}/launch.toml" << EOF
 [[processes]]
-  type = "prod"
-  command = "java"
-  arguments = [ "-cp", "./BOOT-INF/classes:./BOOT-INF/lib/*:.:${layers_dir}/prod/*", "${main}" ]
-  direct = false
-[[processes]]
   type = "dev"
   command = "java"
-  arguments = [ "-cp", "./BOOT-INF/classes:./BOOT-INF/lib/*:.:${layers_dir}/dev/*", "${main}", "--management.endpoints.web.exposure.include=*" ]
-  direct = false
+  args = ["${main}", "--management.endpoints.web.exposure.include=*"]
+[[processes]]
+  type = "prod"
+  command = "java"
+  args = ["${main}"]
 EOF
