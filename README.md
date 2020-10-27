@@ -39,7 +39,7 @@ pack build demo --builder localhost:5000/packs/java
 Run it:
 
 ```
-docker run --entrypoint "/cnb/process/dev" -p 8080:8080 demo
+docker run --entrypoint dev -p 8080:8080 demo
 ```
 
 You will see the devtools starting (via logs and the `restartedMain` thread ID, and there should be actuators
